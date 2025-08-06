@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>問い合わせフォーム</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0f172a;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background-color: #0f62fe;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0353e9;
+    }
+
+    .message {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>お問い合わせ</h1>
+
+  <label for="message">問い合わせ内容：</label>
+  <textarea id="message" placeholder="こちらに内容をご入力ください"></textarea>
+
+  <button id="submitBtn">送信</button>
+
+  <div class="message" id="statusMessage"></div>
+
+  <script>
+    // Make.com の Webhook URL
+    const webhookUrl = "https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo";
+
+    // URLのパラメータ取得（useridなど）
+    const urlParams = new URLSearchParams(window.location.search);
+    const userid = urlParams.get('userid');
+
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const messageText = document.getElementById("message").value.trim();
+      const status = document.getElementById("statusMessage");
+
+      if (!userid) {
+        alert("ユーザーIDがURLから取得できません。");
+        return;
+      }
+
+      if (!messageText) {
+        alert("問い合わせ内容を入力してください。");
+        return;
+      }
+
+      try {
+        // URLにパラメータをつけてGET送信
+        const queryParams = new URLSearchParams({
+          userid: userid,
+          inquiry: messageText
+        });
+
+        const fullUrl = `${webhookUrl}?${queryParams.toString()}`;
+
+        const res = await fetch(fullUrl, { method: "GET" });
+
+        if (!res.ok) throw new Error("送信に失敗しました");
+
+        status.textContent = "送信が完了しました！";
+        document.getElementById("message").value = "";
+        status.style.color = "green";
+      } catch (err) {
+        status.textContent = "エラーが発生しました：" + err.message;
+        status.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
