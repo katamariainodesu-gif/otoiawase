@@ -71,15 +71,15 @@
     // Make.com の Webhook URL
     const webhookUrl = "https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo";
 
-    // URLのパラメータ取得（useridなど）
+    // URLのパラメータ取得（userIdなど）
     const urlParams = new URLSearchParams(window.location.search);
-    const userid = urlParams.get('userid');
+    const userId = urlParams.get('userId');
 
     document.getElementById("submitBtn").addEventListener("click", async () => {
       const messageText = document.getElementById("message").value.trim();
       const status = document.getElementById("statusMessage");
 
-      if (!userid) {
+      if (!userId) {
         alert("ユーザーIDがURLから取得できません。");
         return;
       }
@@ -92,7 +92,7 @@
       try {
         // URLにパラメータをつけてGET送信
         const queryParams = new URLSearchParams({
-          userid: userid,
+          userId: userId,
           inquiry: messageText
         });
 
